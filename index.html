@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<title>Но ани усердна питаються</title>
+		<meta charset="utf-8">
+		<meta name="authro" content="Nonamechik">
+		<meta name="description" content="Повторения html - язика гипер тектовой разметки и css - язика стилей">
+		<meta name="keywords" content="html,css,обучения">
+		<link rel="stylesheet" type="text/css" href="normalaiz.css">
+		<link rel="stylesheet" type="text/css" href="style_1.css">
+		<link rel="shortcut icon" type="images/png" href="favicon.png">
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+	</head>
+
+	<body>
+
+
+		<div class="title">СКРИПТ Космическая игра где ракета уклоняеться от метеоритов (2D)</div>
+
+
+
+		<div class="window">
+			<div class="rocket">
+				<img src="rocket.png" alt="ракета">
+			</div>
+
+			<div class="table__theEnd">
+				СТОЛКНОВЕНИЯ
+			</div>
+
+			<div class="table__change">
+				УЛУЧШЕНИЯ РАКЕТЫ
+			</div>
+
+			<div class="anim-descoration">
+				<img src="rock.png" alt="лунный камень">
+			</div>
+
+			<div class="anim-descoration-two">
+				<img src="rock.png" alt="лунный камень">
+			</div>
+
+			<div class="asteroid">
+				<img src="asteroid.png" alt="астероид">
+			</div>
+
+			<div class="asteroid">
+				<img src="asteroid-two.png" alt="астероид">
+			</div>
+
+			<div class="asteroid">
+				<img src="asteroid-three.png" alt="астероид">
+			</div>
+
+			<div class="asteroid">
+				<img src="asteroid-for.png" alt="астероид">
+			</div>
+
+			<div class="asteroid">
+				<img src="asteroid-five.png" alt="астероид">
+			</div>
+
+			<div class="asteroid">
+				<img src="asteroid-six.png" alt="астероид">
+			</div>
+
+			<div class="asteroid">
+				<img src="asteroid.png" alt="астероид">
+			</div>
+
+			<div class="asteroid">
+				<img src="asteroid.png" alt="астероид">
+			</div>
+
+			<div class="asteroid">
+				<img src="asteroid.png" alt="астероид">
+			</div>
+
+			<div class="asteroid">
+				<img src="asteroid.png" alt="астероид">
+			</div>
+			
+		</div>
+
+
+		<div class="static">
+
+			<div class="static__block">
+				Уклонений: <span id="deviations">0</span>
+			</div>
+
+			<div class="static__block">
+				Уровень: <span id="level">0</span>
+			</div>
+
+			<div class="static__block">
+				Столкновений: <span id="collisions">0</span>
+			</div>
+
+			<div class="static__block">
+				Астероидов: <span id="visibleAST">1</span>
+			</div>
+			
+		</div>
+
+
+
+
+		
+	 	<!--<div class="button">
+	 		<button>Запустить воспроизведения</button>
+	 	</div>-->
+
+	 	
+
+		
+		<script>
+
+
+			// Наша ракета
+			let rocket = document.querySelector(`.rocket`);
+			
+
+			// Высота ракеты в космосе
+			let rocketHeight = 38;
+
+			// Счетчик подсчитующий количество уклонений от астероидов
+			let deviations = 0;
+
+			// Счетчик количества столкновения с астероидом
+			let collisions = 0;
+
+			// Счетчик текущего левела (для изменения моделек)
+			let level = 0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			// Переменная с полем подсчитывающим количество уклонений от астероидов
+			let block_deviations = document.querySelector(`#deviations`);
+
+			// Переменная с полем столкновений с астероидом
+			let block_collisions = document.querySelector(`#collisions`);
+
+			// Переменная с диалоговым окном сигнализирующим о столкновении
+			let tableTheEnd = document.querySelector(`.table__theEnd`);
+
+			// Переменная с диалоговым окном сигнализирующим изменения модельки
+			let tableChange = document.querySelector(`.table__change`);
+
+			// Переменная с полем количества астероидов
+			let frontAsteroid = document.querySelector(`#visibleAST`);
+
+
+			// Счетчик текущего добавляемого астероида
+			let astCount = 0;
+
+			// Массив со всеми астероидами
+			let mesAsteroid = document.querySelectorAll(`.asteroid`);
+
+			// Переменнаяя с полем текущего левела
+			let frontLevel = document.querySelector(`#level`);
+
+			
+
+
+
+
+
+			
+			// Функция запускающая по очереди астероидов в космос (всего их 10)
+			
+			function addAst(){
+				
+				moveAsteroid(mesAsteroid[astCount]);
+				// Регистрирую запуск астеида, и когда будет опять запущенна эта 
+				// функция то добавить сразу следующий астероид по щету
+				astCount++;
+				frontAsteroid.innerHTML = astCount;
+
+			}
+
+			addAst();
+
+			
+
+
+			
+
+
+			// При отпускании клавишы идет проверка
+			window.addEventListener(`keyup`, (event)=>{
+				
+				// Если нажата клавиша Space то высота увеличиваеться на 
+				// 8 процентов и сразу устанавливаеться в браузере
+				if(event.code == `Space` && rocketHeight < 85){
+					rocketHeight+=8;
+					rocket.style.bottom = `${rocketHeight}%`;
+
+					// Добавляю клас с анимацией который иммитирует типа
+					// подем ракеты вверх, после чего данный клас удаляеться.
+					rocket.classList.add(`getup`);
+					setTimeout(()=>{
+						rocket.classList.remove(`getup`);
+					}, 200);
+				}
+
+
+
+
+			});
+
+
+			// Подобие гравитации тянущую ракету постоянно вниз
+			setInterval(()=>{
+				let rocket = document.querySelector(`.rocket`);
+
+				if(rocketHeight > 0){
+					rocketHeight-=1;
+					rocket.style.bottom = `${rocketHeight}%`;
+				}
+
+
+				// Проверки для открытия каждого астероида
+				// переменная deviations - количество уклоненных астероидов
+				// переменная astCount - астероид по щету который нужно открыть
+				if(deviations == 1 && astCount == 1){
+					addAst();
+				} else if(deviations == 2 && astCount == 2){
+					addAst();
+				}  else if(deviations == 3 && astCount == 3){
+					addAst();
+				} else if(deviations == 4 && astCount == 4){
+					addAst();
+				} else if(deviations == 5 && astCount == 5){
+					addAst();
+				} else if(deviations == 6 && astCount == 6){
+					addAst();
+				} else if(deviations == 7 && astCount == 7){
+					addAst();
+				} else if(deviations == 8 && astCount == 8){
+					addAst();
+				} else if(deviations == 9 && astCount == 9){
+					addAst();
+				} 	
+
+
+
+				// Если количество пропущенных астероидов 20 то
+				// мы изменяем модельку ракеты
+				if(deviations === 20 && level === 0){
+					level++;
+					frontLevel.innerHTML = level;
+
+
+					// Врубаю диалоговое окно с изменениям модельки ракеты
+					tableChange.style.opacity = `1`;
+					setTimeout(()=>{
+						tableChange.style.opacity = `0`;
+					}, 300);
+					// Устанавливаю новую модельку ракеты
+					rocket.childNodes[1].src = `ufo.png`;
+
+				} else if(deviations === 40 && level === 1){
+					level++;
+					frontLevel.innerHTML = level;
+
+
+
+					tableChange.style.opacity = `1`;
+					setTimeout(()=>{
+						tableChange.style.opacity = `0`;
+					}, 300);
+					rocket.childNodes[1].src = `ufo-two.png`;
+				}
+
+
+
+			}, 120)
+
+			// Функция движения астероида
+			// Аргумент asteriod - сам астероид переданный функции через цикл
+			// Аргумент speed - содержит в себе рандомную скорость каждого астероида
+			// Аргумент distance - содержит в себе изначальную right позиция астероида
+			// Аргумент bottom - отступ астероида снизу, рандомно задаеться при каждом старте
+			// Аргумент width - размер астероида, рандомно задаеться при каждом старте
+			// Аргумент theEnd - учитывает столкновения астероида с ракетой, тем самым предотвращая баг со счетчиком
+			function moveAsteroid(asteriod, speed=0, distance=-7, bottom=0, width=0, theEnd=0){
+
+
+
+
+
+
+				// Если астероид преодолел дистанцию в 100% то он исчезает на 3 секунды.
+				// Онулируем все значения к начальным а также сразу их задаем астероиду.
+				// После же делаим астероид видимым и продолжаем рекурсию
+				if(distance >= 100){
+
+					// Учитываем прохождения астероида первый круг и записываем в счетчик.
+					// После чего сразу визуализирую его на странице спомощю .innerHTML
+					deviations++;
+					block_deviations.innerHTML = `${deviations}`;
+
+					asteriod.style.display = `none`;
+					distance = -7;
+					bottom = 0;
+					speed = 0;
+					width = 0;
+					asteriod.style.right = `${distance}%`;
+					asteriod.style.bottom = `${bottom}%`;
+					asteriod.style.width = `${width}%`;
+					setTimeout(()=>{
+						asteriod.style.display = `block`;
+						return moveAsteroid(asteriod, speed, distance, bottom, width=0, theEnd=0);
+					}, 3000)
+
+					return;
+				}
+
+
+				
+				
+				
+				// Если пройденное растояния астероидом distance может столкнуться с ракетой  (distance > 75)
+				// Если пройденное растояния астероида distance не дальше растояния поражения ракеты (distance < 90)
+				// Ракета с учетом своей высоты + ракеты, больше начала высоты астероида (rocketHeight + 13 > bottom )
+				// Высота ракеты не больше высоты астероида с учетом его размера (rocketHeight < bottom + Math.floor(100 - ( (540 - 18) / 5.4)))
+				// ТОИСТЬ ПРОХОДИТ ПРОВЕРКА СТОЛКНОВЕНИЯ РАКЕТЫ СНИЗУ АСТЕРОИДА НО ЕСЛИ СВЕРХУ ВНИЗ ТО НЕ ПРОЙДЕТ ПРОВЕРКА
+
+				if(distance > 77 && distance < 90 && rocketHeight + 11 > bottom && rocketHeight < bottom + Math.floor(100 - ( (540 - 18) / 5.4)) && theEnd == 0){
+
+					// Анулирую количество уклонений от астероидов
+					deviations = 0;
+
+					// Регистрирую попадания астероида в ракету и предотвращаю повторную проверку
+					theEnd = 1;
+
+					// Записываю в счетчик столкновения с астероидом
+					collisions++;
+
+					// Визуализирую текущие значения счетчиков на странице
+					block_collisions.innerHTML = `${collisions}`;
+					block_deviations.innerHTML = `${deviations}`;
+					// Изменяю цвет счетчика астероидов но через 300млс заменяю его на стандартный,
+					// делаю видимым табличку с столкновениям с астероидом, но через 300млс также убераю ее
+					block_deviations.style.color = `red`;
+					tableTheEnd.style.opacity = `1`;
+
+					setTimeout(()=>{
+						block_deviations.style.color = `white`;
+						tableTheEnd.style.opacity = `0`;
+					}, 300);
+
+
+
+					// Если высота ракеты + ее размер, выше начальной высоты астероида (rocketHeight + 13 > bottom)
+					// Если высота ракеты больше высоты астероида но не больше высоты астероида + размер астероида
+				} 
+					// Если высота ракеты больше высоты астероида (rocketHeight > bottom)
+					// Если высота ракеты меньше высоты астероида с учетом размера астероида (rocketHeight - 13 < bottom + Math.floor(100 - ( (540 - 18) / 5.4)))
+					// !!!НАЧАЛО ВЫСОТЫ ОПРЕДЕЛЯЕТЬСЯ ВНАЧАЛЕ БЛОКА (а точнее сверху ракеты) И НЕ УЧИТЫВАЕТ РАСТЕЖЕНИЕ
+					// РАКЕТЫ, И ПОЭТОМУ МЫ ОТНЯЛИ 13% (которые становят размер ракеты) ЧТОБ УЧИТЫВАЛОСЬ БУДТО
+					// ПРОВЕРКА УЧИТЫВАЕТ ВЫСОТУ РАКЕТЫ С ЕЕ НАЧАЛА
+				if(distance > 77 && distance < 90 && rocketHeight > bottom && rocketHeight - 8 < bottom + Math.floor(100 - ( (540 - 18) / 5.4)) && theEnd == 0){
+					// Делаю тоже самое что и в первом операторе if
+					deviations = 0;
+					theEnd = 1;
+					collisions++;
+					block_collisions.innerHTML = `${collisions}`;
+					block_deviations.innerHTML = `${deviations}`;
+					block_deviations.style.color = `red`;
+					tableTheEnd.style.opacity = `1`;
+					setTimeout(()=>{
+						block_deviations.style.color = `white`;
+						tableTheEnd.style.opacity = `0`;
+					}, 300);
+				}
+
+
+		
+
+				
+
+
+
+
+
+
+
+
+
+
+
+
+				
+
+				// Генерация размера астероида
+				if(width == 0){
+					width = randWidth();
+				}
+
+				// Генерация скорости астероида
+				if(speed == 0){
+					speed = randSpeed();
+				}
+
+				// Генерация отступа сверуху
+				if(bottom == 0){
+					bottom = randTop();
+					asteriod.style.bottom = `${bottom}%`;
+				}
+
+				// Увеличиваю растояния астероида при кадой итерации
+				distance++;
+
+				// Устанавливаю ширину и отступ астероида
+				asteriod.style.right = `${distance}%`;
+				asteriod.style.width = `${width}%`;
+
+				// Запускаю рекурсию со всеми установленными текущими параметрами
+				setTimeout(()=>{
+					return moveAsteroid(asteriod, speed, distance, bottom, width, theEnd);
+				}, speed);
+
+
+			}
+
+
+			// Генерация рандомной скорости
+			function randSpeed(){
+				return Math.floor(Math.random() * 150 + 50);
+			}
+
+			// Генерация рандомного отступа сверху
+			function randTop(){
+				return Math.floor(Math.random() * 93);
+			}
+
+			// Генерация рандомной высоты астероида
+			function randWidth(){
+				return Math.floor(Math.random() * 3 + 4);
+			}
+
+
+			
+
+						
+			
+		</script>
+
+		<script src="test.js"></script>
+	</body>
+</html>
