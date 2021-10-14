@@ -1,12 +1,14 @@
 .title {
-  width: 550px;
+  width: 1100px;
   height: 4vw;
-  text-align: center;
   font-family: sans-serif;
   font-size: 1.5vw;
   margin-top: 6%;
   color: black;
-  margin-left: 29%;
+  margin-left: 1%;
+  background-color: black;
+  color: white;
+  padding: 1%;
 }
 * {
   -webkit-box-sizing: border-box;
